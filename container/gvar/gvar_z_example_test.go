@@ -121,10 +121,10 @@ func ExampleVar_Float32() {
 // Time
 func ExampleVar_Time() {
 	var v = gvar.New("2021-11-11 00:00:00")
-	g.DumpWithType(v.Time())
+	fmt.Println(v.Time().Format("2006-01-02 15:04:05"))
 
 	// Output:
-	// time.Time(29) "2021-11-11 00:00:00 +0800 CST"
+	// 2021-11-11 00:00:00
 }
 
 // GTime
