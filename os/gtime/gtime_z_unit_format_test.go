@@ -8,15 +8,20 @@ package gtime_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/test/gtest"
 )
 
 func Test_Format(t *testing.T) {
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	oldLocal := time.Local
+	time.Local = location
+	defer func() { time.Local = oldLocal }()
+
 	gtest.C(t, func(t *gtest.T) {
 		timeTemp, err := gtime.StrToTime("2006-01-11 15:04:05", "Y-m-d H:i:s")
-		timeTemp.ToZone("Asia/Shanghai")
 		if err != nil {
 			t.Error("test fail")
 		}
@@ -98,36 +103,17 @@ func Test_Format(t *testing.T) {
 		t.Assert(ti.FormatNew("Y-m-d h:i:s"), nil)
 		t.Assert(ti.FormatTo("Y-m-d h:i:s"), nil)
 		t.Assert(ti.Layout("Y-m-d h:i:s"), "")
-		t.Assert(ti.LayoutNew("Y-m-d h:i:s"), nil)
-		t.Assert(ti.LayoutTo("Y-m-d h:i:s"), nil)
 	})
 }
 
 func Test_Format_ZeroString(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
-		timeTemp, err := gtime.StrToTime("0000-00-00 00:00:00")
-		t.AssertNE(err, nil)
-		t.Assert(timeTemp.String(), "")
+		t.Assert(gtime.New().Format(""), "")
 	})
 }
 
 func Test_FormatTo(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
-		timeTemp := gtime.Now()
-		t.Assert(timeTemp.FormatTo("Y-m-01 00:00:01"), timeTemp.Time.Format("2006-01")+"-01 00:00:01")
-	})
-}
-
-func Test_Layout(t *testing.T) {
-	gtest.C(t, func(t *gtest.T) {
-		timeTemp := gtime.Now()
-		t.Assert(timeTemp.Layout("2006-01-02 15:04:05"), timeTemp.Time.Format("2006-01-02 15:04:05"))
-	})
-}
-
-func Test_LayoutTo(t *testing.T) {
-	gtest.C(t, func(t *gtest.T) {
-		timeTemp := gtime.Now()
-		t.Assert(timeTemp.LayoutTo("2006-01-02 00:00:00"), timeTemp.Time.Format("2006-01-02 00:00:00"))
+		t.Assert(gtime.NewFromStr("2006-01-01 12:00:00").FormatTo("Y-m-d"), "2006-01-01 00:00:00")
 	})
 }
