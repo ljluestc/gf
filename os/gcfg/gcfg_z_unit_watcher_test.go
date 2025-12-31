@@ -171,6 +171,9 @@ func TestWatcher_SetContentNotify(t *testing.T) {
 
 		// Add watcher.
 		c.AddWatcher(key, func(ctx context.Context) {
+			if gcfg.GetAdapterFileCtx(ctx).GetOperation() == gcfg.OperationChmod {
+				return
+			}
 			count.Add(1)
 		})
 
@@ -214,12 +217,19 @@ func TestWatcher_RemoveContentNotify(t *testing.T) {
 
 		// Add watcher.
 		c.AddWatcher(key, func(ctx context.Context) {
+			if gcfg.GetAdapterFileCtx(ctx).GetOperation() == gcfg.OperationChmod {
+				return
+			}
 			count.Add(1)
 		})
 
 		// Check initial values.
 		t.Assert(c.MustGet(ctx, "key").String(), "value1")
 		t.Assert(count.Val(), 0)
+
+		// Wait for any late fsnotify events from file creation.
+		time.Sleep(1 * time.Second)
+		count.Set(0)
 
 		// Remove custom content.
 		c.RemoveContent(configFile)
@@ -253,12 +263,19 @@ func TestWatcher_ClearContentNotify(t *testing.T) {
 
 		// Add watcher.
 		c.AddWatcher(key, func(ctx context.Context) {
+			if gcfg.GetAdapterFileCtx(ctx).GetOperation() == gcfg.OperationChmod {
+				return
+			}
 			count.Add(1)
 		})
 
 		// Check initial values.
 		t.Assert(c.MustGet(ctx, "key").String(), "value1")
 		t.Assert(count.Val(), 0)
+
+		// Wait for any late fsnotify events from file creation.
+		time.Sleep(1 * time.Second)
+		count.Set(0)
 
 		// Clear all custom content.
 		c.ClearContent()

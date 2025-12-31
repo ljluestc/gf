@@ -84,7 +84,8 @@ func Test_Router_DomainObjectRest(t *testing.T) {
 	})
 	gtest.C(t, func(t *gtest.T) {
 		client := g.Client()
-		client.SetPrefix(fmt.Sprintf("http://localhost:%d", s.GetListenedPort()))
+		client.SetPrefix(fmt.Sprintf("http://127.0.0.1:%d", s.GetListenedPort()))
+		client.SetHeader("Host", "localhost")
 
 		t.Assert(client.GetContent(ctx, "/"), "1Object Get2")
 		t.Assert(client.PutContent(ctx, "/"), "1Object Put2")
@@ -102,7 +103,8 @@ func Test_Router_DomainObjectRest(t *testing.T) {
 	})
 	gtest.C(t, func(t *gtest.T) {
 		client := g.Client()
-		client.SetPrefix(fmt.Sprintf("http://local:%d", s.GetListenedPort()))
+		client.SetPrefix(fmt.Sprintf("http://127.0.0.1:%d", s.GetListenedPort()))
+		client.SetHeader("Host", "local")
 
 		t.Assert(client.GetContent(ctx, "/"), "1Object Get2")
 		t.Assert(client.PutContent(ctx, "/"), "1Object Put2")
